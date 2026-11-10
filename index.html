@@ -216,7 +216,7 @@
 
             // 2. Send full data (text + files) to your Render backend
             const renderFormData = new FormData(form);
-            const renderPromise = fetch('https://your-render-service-name.onrender.com/submit', {
+            const renderPromise = fetch('https://dynamic-form-handler.onrender.com.', {
                 method: 'POST',
                 body: renderFormData
             });
