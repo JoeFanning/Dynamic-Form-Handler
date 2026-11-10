@@ -25,25 +25,32 @@ def read_root():
 
 @app.post("/submit")
 async def handle_form(request: Request):
-    # 1. Capture all form fields (text + files) dynamically via request.form()
-    form_data = await request.form()
+    content_type = request.headers.get("content-type", "")
+    
     parsed_data = {}
     saved_files = []
 
     print("\n--- INCOMING FORM SUBMISSION ---")
 
-    for key, value in form_data.multi_items():
-        # Check if the item is an uploaded file
-        if hasattr(value, "filename") and value.filename:
-            file_path = os.path.join(UPLOAD_DIR, value.filename)
-            contents = await value.read()
-            with open(file_path, "wb") as f:
-                f.write(contents)
-            saved_files.append(value.filename)
-            print(f"[Saved File Successfully]: {key} -> {value.filename} -> to {file_path}")
-        else:
-            print(f"[Field - Text]: {key} -> {value}")
-            parsed_data[key] = value
+    if "application/json" in content_type:
+        # Handle JSON payload
+        json_data = await request.json()
+        print(f"[JSON Payload]: {json_data}")
+        parsed_data = json_data
+    else:
+        # Handle FormData / Multipart payload
+        form_data = await request.form()
+        for key, value in form_data.multi_items():
+            if hasattr(value, "filename") and value.filename:
+                file_path = os.path.join(UPLOAD_DIR, value.filename)
+                contents = await value.read()
+                with open(file_path, "wb") as f:
+                    f.write(contents)
+                saved_files.append(value.filename)
+                print(f"[Saved File Successfully]: {key} -> {value.filename} -> to {file_path}")
+            else:
+                print(f"[Field - Text]: {key} -> {value}")
+                parsed_data[key] = value
 
     print("---------------------------------\n")
 
