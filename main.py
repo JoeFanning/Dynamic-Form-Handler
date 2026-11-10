@@ -1,7 +1,6 @@
 import os
-from fastapi import FastAPI, File, Form, Request, UploadFile
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from typing import List, Optional
 
 app = FastAPI(title="Dynamic Form Handler")
 
@@ -25,35 +24,26 @@ def read_root():
 
 
 @app.post("/submit")
-async def handle_form(
-    request: Request,
-    files: Optional[List[UploadFile]] = File(None),
-):
-    # 1. Capture all form fields / text data dynamically
+async def handle_form(request: Request):
+    # 1. Capture all form fields (text + files) dynamically via request.form()
     form_data = await request.form()
     parsed_data = {}
+    saved_files = []
 
     print("\n--- INCOMING FORM SUBMISSION ---")
 
     for key, value in form_data.multi_items():
-        # If the item is an uploaded file sent via standard form data, handle its metadata
+        # Check if the item is an uploaded file
         if hasattr(value, "filename") and value.filename:
-            print(f"[Field - File]: {key} -> filename: {value.filename}")
+            file_path = os.path.join(UPLOAD_DIR, value.filename)
+            contents = await value.read()
+            with open(file_path, "wb") as f:
+                f.write(contents)
+            saved_files.append(value.filename)
+            print(f"[Saved File Successfully]: {key} -> {value.filename} -> to {file_path}")
         else:
             print(f"[Field - Text]: {key} -> {value}")
             parsed_data[key] = value
-
-    # 2. Save any explicitly uploaded files
-    saved_files = []
-    if files:
-        for file in files:
-            if file.filename:
-                file_path = os.path.join(UPLOAD_DIR, file.filename)
-                contents = await file.read()
-                with open(file_path, "wb") as f:
-                    f.write(contents)
-                saved_files.append(file.filename)
-                print(f"[Saved File Successfully]: {file.filename} -> to {file_path}")
 
     print("---------------------------------\n")
 
