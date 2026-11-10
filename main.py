@@ -1,49 +1,55 @@
 import os
+from fastapi import FastAPI, File, Form, Request, UploadFile
 from typing import List, Optional
-from fastapi import FastAPI, File, Form, Request, UploadFile, HTTPException
-from fastapi.responses import JSONResponse
 
-app = FastAPI()
+app = FastAPI(title="Dynamic Form Handler")
 
-# Create a folder for temporary file storage before database/cloud upload
-UPLOAD_FOLDER = "uploads"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# Create a folder to store uploaded files if it doesn't already exist
+UPLOAD_DIR = "uploaded_files"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-@app.post("/submit-form")
-async def handle_form(request: Request):
-    try:
-        # 1. Capture all dynamic text/input fields from the incoming form submission
-        form_data = await request.form()
-        form_dict = {key: value for key, value in form_data.items() if not isinstance(value, UploadFile)}
-        
-        # 2. Capture any uploaded files
-        saved_file_paths = []
-        for key, value in form_data.items():
-            if isinstance(value, UploadFile):
-                file: UploadFile = value
-                if file.filename:
-                    file_path = os.path.join(UPLOAD_FOLDER, file.filename)
-                    contents = await file.read()
-                    with open(file_path, "wb") as f:
-                        f.write(contents)
-                    saved_file_paths.append(file_path)
 
-        # TODO: Save `form_dict` and `saved_file_paths` into your PostgreSQL database here!
+@app.get("/")
+def read_root():
+  return {"message": "Dynamic Form Handler is live and ready!"}
 
-        return JSONResponse(
-            status_code=200,
-            content={
-                "status": "success",
-                "message": "Form data and files processed successfully!",
-                "data_received": form_dict,
-                "files_saved": saved_file_paths
-            }
-        )
 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+@app.post("/submit")
+async def handle_form(
+    request: Request,
+    files: Optional[List[UploadFile]] = File(None),
+):
+  # 1. Capture all form fields / text data dynamically
+  form_data = await request.form()
+  parsed_data = {}
 
-if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("PORT", 8000))
-    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
+  print("\n--- INCOMING FORM SUBMISSION ---")
+
+  for key, value in form_data.multi_items():
+    # If the item is an uploaded file sent via standard form data, handle its metadata
+    if hasattr(value, "filename") and value.filename:
+      print(f"[Field - File]: {key} -> filename: {value.filename}")
+    else:
+      print(f"[Field - Text]: {key} -> {value}")
+      parsed_data[key] = value
+
+  # 2. Save any explicitly uploaded files
+  saved_files = []
+  if files:
+    for file in files:
+      if file.filename:
+        file_path = os.path.join(UPLOAD_DIR, file.filename)
+        contents = await file.read()
+        with open(file_path, "wb") as f:
+          f.write(contents)
+        saved_files.append(file.filename)
+        print(f"[Saved File Successfully]: {file.filename} -> to {file_path}")
+
+  print("---------------------------------\n")
+
+  return {
+      "status": "success",
+      "message": "Form data processed and logged successfully!",
+      "received_fields": parsed_data,
+      "saved_files": saved_files,
+  }
