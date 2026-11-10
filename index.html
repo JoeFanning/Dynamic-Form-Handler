@@ -1,1 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            padding: 15px;
+            margin: 0;
+            overflow-x: hidden;
+            -ms-overflow-style: none;  
+            scrollbar-width: none;  
+        }
+        body::-webkit-scrollbar {
+            display: none; 
+        }
 
+        .contact-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 25px;
+            box-sizing: border-box;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        h2 {
+            color: #0b1c3d;
+            margin-top: 0;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        .form-row .form-group {
+            flex: 1;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #0b1c3d;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="file"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e6923b;
+            border-radius: 0;
+            box-sizing: border-box;
+            background-color: #fcfcfc;
+            font-size: 14px;
+            transition: border-color 0.2s ease, outline 0.2s ease;
+        }
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="file"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #0b1c3d;
+            background-color: #ffffff;
+        }
+        textarea {
+            resize: vertical;
+            height: 120px;
+        }
+
+        button[type="submit"] {
+            background-color: #0b1c3d;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            transition: background-color 0.2s ease;
+            margin-bottom: 20px;
+        }
+        button[type="submit"]:hover {
+            background-color: #08132b;
+        }
+
+        #result {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #0b1c3d;
+            text-align: center;
+        }
+
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 5px;
+                background-color: #fff;
+            }
+            .contact-container {
+                padding: 10px;
+                box-shadow: none;
+            }
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            textarea {
+                height: 90px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="contact-container">
+    <h2>Application Form</h2>
+    
+    <form id="form" method="POST" enctype="multipart/form-data">
+        <!-- Web3Forms Access Key -->
+        <input type="hidden" name="access_key" value="63e1a15e-f252-4b03-9204-9718a738f7dc">
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input type="text" id="first_name" name="first_name" required>
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last / Second Name</label>
+                <input type="text" id="last_name" name="last_name" required>
+            </div>
+        </div>
+
+        <!-- Occupation Field -->
+        <div class="form-group">
+            <label for="occupation">Occupation / Trade</label>
+            <input type="text" id="occupation" name="occupation" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="text" id="phone" name="phone">
+        </div>
+
+        <div class="form-group">
+            <label for="street_address">Street Address</label>
+            <input type="text" id="street_address" name="street_address" required>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="city">City</label>
+                <input type="text" id="city" name="city" required>
+            </div>
+            <div class="form-group">
+                <label for="postal_code">Postal / ZIP Code</label>
+                <input type="text" id="postal_code" name="postal_code" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="country">Country</label>
+            <input type="text" id="country" name="country" required>
+        </div>
+
+        <div class="form-group">
+            <label for="nationality">Nationality</label>
+            <input type="text" id="nationality" name="nationality" required>
+        </div>
+
+        <div class="form-group">
+            <label for="message">Message / Work Experience</label>
+            <textarea id="message" name="message" placeholder="Please briefly describe your work experience..." required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="files">Upload CV / Documents</label>
+            <input type="file" id="files" name="files" multiple>
+        </div>
+
+        <!-- SUBMIT BUTTON -->
+        <button type="submit" id="submit-btn">Send Application</button>
+        <div id="result"></div>
+
+    </form>
+</div>
+
+<script>
+    const form = document.getElementById('form');
+    const result = document.getElementById('result');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        result.innerText = "Submitting application...";
+        
+        try {
+            // 1. Send text data (including access_key) to Web3Forms for email notification (NO files)
+            const web3FormData = new FormData(form);
+            web3FormData.delete('files'); // Strips out files so they aren't sent to Web3Forms
+
+            const web3Promise = fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                body: web3FormData
+            });
+
+            // 2. Send full data (text + files) to your Render backend
+            const renderFormData = new FormData(form);
+            const renderPromise = fetch('https://your-render-service-name.onrender.com/submit', {
+                method: 'POST',
+                body: renderFormData
+            });
+
+            // Wait for both requests to complete
+            const [web3Res, renderRes] = await Promise.all([web3Promise, renderPromise]);
+
+            if (web3Res.ok && renderRes.ok) {
+                result.style.color = "green";
+                result.innerHTML = "Application submitted successfully! Email sent and files uploaded.";
+                form.reset();
+            } else {
+                result.style.color = "orange";
+                result.innerHTML = "Application submitted, but check network connections.";
+            }
+        } catch (error) {
+            result.style.color = "red";
+            result.innerText = "Connection error. Please try again later.";
+        }
+    });
+</script>
+
+</body>
+</html>
