@@ -112,3 +112,30 @@ async def handle_form(request: Request):
         raise HTTPException(status_code=422, detail=str(e))
     finally:
         db.close()
+
+@app.get("/submissions")
+def get_submissions():
+    db = SessionLocal()
+    try:
+        # Query all rows from the form_submissions table
+        submissions = db.query(FormSubmission).all()
+        
+        results = []
+        for sub in submissions:
+            results.append({
+                "id": sub.id,
+                "submitted_at": str(sub.submitted_at),
+                # Parse the stored JSON string back into a dictionary for clean viewing
+                "payload": json.loads(sub.payload),
+                "saved_files": sub.saved_files
+            })
+        
+        return {
+            "status": "success",
+            "total_submissions": len(results),
+            "data": results
+        }
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+    finally:
+        db.close()
