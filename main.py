@@ -113,7 +113,7 @@ async def handle_form(request: Request):
     finally:
         db.close()
 
-@app.get("/submissions")
+@app.get("/api/submissions")
 def get_submissions():
     db = SessionLocal()
     try:
