@@ -1,6 +1,6 @@
 # Dynamic Form Handler 📋⚡
 
-A lightweight, robust backend application built to dynamically process, validate, and store different form submissions. Designed with **FastAPI** and backed by a **PostgreSQL** database.
+A lightweight, backend application built to dynamically process, validate, and store different form submissions. Designed with **FastAPI** and backed by a **PostgreSQL** database.
 
 ---
 
