@@ -60,4 +60,4 @@ Key responsibility: Keeping database queries completely separate from your HTTP 
 
 I also downloaded Dbeaver 26.2.4(https://dbeaver.io/download/) a free, open-source database management tool onto my computer to look at the database structure and information in detail on the same database on Render.
 
-https://joefanning.github.io/Dynamic-Form-Handler/database_table_contact_form.html
+https://joefanning.github.io/Dynamic-Form-Handler/all_forms_database_table.html
