@@ -36,20 +36,24 @@ What it does: Initializes the FastAPI application instance (app = FastAPI()), re
 
 Key responsibility: Acting as the traffic controller. It receives HTTP requests, calls the necessary functions from crud.py, validates data using schemas.py, and returns the final HTTP response to the client.
 
-**database.py** (The Connection Hub)
+**database.py**
+(The Connection Hub)
 What it does: Initializes the database connection, configures the SQLAlchemy engine, and creates the session factory (SessionLocal).
 
 Key responsibility: It also defines Base (which your database models inherit from) and provides the get_db() dependency generator function. This generator uses Python's yield statement to automatically handle opening a database session for a request and closing it when the request finishes—eliminating the need for manual try...finally blocks in your routes
 
-**models.py** (The Database Blueprint / ORM)
+**models.py**
+(The Database Blueprint / ORM)
 What it does: Defines your SQLAlchemy ORM (Object-Relational Mapping) models. These Python classes map directly to your database tables and columns (e.g., FormSubmission corresponding to a form_submissions table).
 
 Key responsibility: Telling SQLAlchemy what your database schema looks like so it can translate Python code into SQL queries behind the scenes.
 
-**crud.py** (The Data Logic / Query Layer)
+**crud.py**
+(The Data Logic / Query Layer)
 What it does: Stands for Create, Read, Update, Delete. This file contains pure database query functions (like get_all_submissions(db)) that interact with your session.
 
 Key responsibility: Keeping database queries completely separate from your HTTP routing logic. If you need to fetch submissions from a background worker, a CLI script, or a different API endpoint, you can just call crud.get_all_submissions(db) instead of rewriting the query
+
 
 (to see in browser current operational status or live status of Render backend engine: https://dynamic-form-handler.onrender.com/)
 
