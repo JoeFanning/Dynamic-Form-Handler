@@ -31,6 +31,7 @@ A lightweight, backend application built to dynamically process, validate, and s
 
 └── crud.py          # Database query functions (Create, Read, Update, Delete)
 
+
 **main.py**
 (The Application Entrypoint)
 What it does: Initializes the FastAPI application instance (app = FastAPI()), registers middleware, and hosts your API route handlers (endpoints like @app.get or @app.post).
