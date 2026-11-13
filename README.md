@@ -55,7 +55,7 @@ What it does: Stands for Create, Read, Update, Delete. This file contains pure d
 Key responsibility: Keeping database queries completely separate from your HTTP routing logic. If you need to fetch submissions from a background worker, a CLI script, or a different API endpoint, you can just call crud.get_all_submissions(db) instead of rewriting the query
 
 
-(to see in browser current operational status or live status of Render backend engine: https://dynamic-form-handler.onrender.com/)
+(to see in browser current operational status or live status of Render backend engine: [https://dynamic-form-handler.onrender.com/](https://dynamic-form-handler.onrender.com/))
 
 (to see in browser contents of the database on Render: https://dynamic-form-handler.onrender.com/api/submissions)
 
