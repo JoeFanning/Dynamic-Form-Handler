@@ -202,7 +202,7 @@
 
     form.addEventListener('submit', async function(e) {
         e.preventDefault();
-        result.innerText = "Submitting application...";
+        result.innerText = "Submitting application please wait...";
         
         try {
             // 1. Send text data (including access_key) to Web3Forms for email notification (NO files)
@@ -226,7 +226,7 @@
 
             if (web3Res.ok && renderRes.ok) {
                 result.style.color = "green";
-                result.innerHTML = "Application submitted successfully! Email sent and files uploaded.";
+                result.innerHTML = "Application submitted successfully to Bouwbuild!.";
                 form.reset();
             } else {
                 result.style.color = "orange";
