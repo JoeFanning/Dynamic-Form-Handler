@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Submissions Dashboard</title>
     <style>
-        body { font-family: sans-serif; max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+        body { font-family: sans-serif; max-width: 1600px; margin: 30px auto; padding: 0 20px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; vertical-align: top; font-size: 13px; }
         th { background-color: #f4f4f4; }
@@ -19,7 +19,9 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Name / Details</th>
+                <th>Name</th>
+                <th>Occupation</th>
+                <th>Nationality</th>
                 <th>Contact Info</th>
                 <th>Address & Location</th>
                 <th>Message / Content</th>
@@ -27,7 +29,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr><td colspan="6">Loading submissions...</td></tr>
+            <tr><td colspan="8">Loading submissions...</td></tr>
         </tbody>
     </table>
 
@@ -45,17 +47,19 @@
                 tbody.innerHTML = ""; 
 
                 if (submissions.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="6">No submissions found.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8">No submissions found.</td></tr>';
                     return;
                 }
 
                 submissions.forEach(sub => {
                     const p = sub.payload || {};
                     
-                    // Name & Occupation
+                    // Name
                     let fullName = p.name || `${p.first_name || ''} ${p.last_name || ''}`.trim() || 'Unknown';
-                    let occupationHtml = p.occupation ? `<div class="meta-text"><strong>Occupation:</strong> ${p.occupation}</div>` : '';
-                    let nationalityHtml = p.nationality ? `<div class="meta-text"><strong>Nationality:</strong> ${p.nationality}</div>` : '';
+                    
+                    // Specific fields
+                    let occupation = p.occupation || '-';
+                    let nationality = p.nationality || '-';
 
                     // Contact Info
                     const email = p.email || 'N/A';
@@ -72,11 +76,9 @@
                     const row = document.createElement("tr");
                     row.innerHTML = `
                         <td>${sub.id}</td>
-                        <td>
-                            <strong>${fullName}</strong>
-                            ${occupationHtml}
-                            ${nationalityHtml}
-                        </td>
+                        <td><strong>${fullName}</strong></td>
+                        <td>${occupation}</td>
+                        <td>${nationality}</td>
                         <td>
                             <a href="mailto:${email}">${email}</a>
                             ${phone}
@@ -93,7 +95,7 @@
             } catch (error) {
                 console.error("Failed to load submissions:", error);
                 document.querySelector("#submissions-table tbody").innerHTML = 
-                    '<tr><td colspan="6" style="color: red;">Failed to load data from backend API.</td></tr>';
+                    '<tr><td colspan="8" style="color: red;">Failed to load data from backend API.</td></tr>';
             }
         }
 
