@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <title>Submissions Dashboard</title>
     <style>
-        body { font-family: sans-serif; max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+        body { font-family: sans-serif; max-width: 1400px; margin: 30px auto; padding: 0 20px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; vertical-align: top; font-size: 14px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; vertical-align: top; font-size: 13px; }
         th { background-color: #f4f4f4; }
-        .file-tag { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-top: 4px; }
+        .file-tag { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-top: 4px; }
+        .meta-text { color: #555; font-size: 12px; margin-top: 2px; }
     </style>
 </head>
 <body>
@@ -19,13 +20,14 @@
             <tr>
                 <th>ID</th>
                 <th>Name / Details</th>
-                <th>Email</th>
+                <th>Contact Info</th>
+                <th>Address & Location</th>
                 <th>Message / Content</th>
                 <th>Submitted At</th>
             </tr>
         </thead>
         <tbody>
-            <tr><td colspan="5">Loading submissions...</td></tr>
+            <tr><td colspan="6">Loading submissions...</td></tr>
         </tbody>
     </table>
 
@@ -37,39 +39,53 @@
                 const response = await fetch(API_URL);
                 const result = await response.json();
                 
-                // Extract the data array from the API response object
                 const submissions = result.data || [];
                 
                 const tbody = document.querySelector("#submissions-table tbody");
                 tbody.innerHTML = ""; 
 
                 if (submissions.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="5">No submissions found.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6">No submissions found.</td></tr>';
                     return;
                 }
 
                 submissions.forEach(sub => {
                     const p = sub.payload || {};
                     
-                    // Handle both contact form ("name") and application form ("first_name"/"last_name")
+                    // Name & Occupation
                     let fullName = p.name || `${p.first_name || ''} ${p.last_name || ''}`.trim() || 'Unknown';
-                    if (p.occupation) fullName += ` (${p.occupation})`;
+                    let occupationHtml = p.occupation ? `<div class="meta-text"><strong>Occupation:</strong> ${p.occupation}</div>` : '';
+                    let nationalityHtml = p.nationality ? `<div class="meta-text"><strong>Nationality:</strong> ${p.nationality}</div>` : '';
 
+                    // Contact Info
                     const email = p.email || 'N/A';
+                    const phone = p.phone ? `<div class="meta-text">📞 ${p.phone}</div>` : '';
+
+                    // Address Info
+                    let addressParts = [p.street_address, p.city, p.postal_code, p.country].filter(Boolean);
+                    let addressHtml = addressParts.length > 0 ? addressParts.join(', ') : 'N/A';
+
+                    // Message & Files
                     const message = p.message || 'No message provided';
-                    
-                    // Check if a file was uploaded
-                    let fileHtml = '';
-                    if (sub.saved_files) {
-                        fileHtml = `<div class="file-tag">📎 ${sub.saved_files}</div>`;
-                    }
+                    let fileHtml = sub.saved_files ? `<div class="file-tag">📎 ${sub.saved_files}</div>` : '';
 
                     const row = document.createElement("tr");
                     row.innerHTML = `
                         <td>${sub.id}</td>
-                        <td><strong>${fullName}</strong></td>
-                        <td><a href="mailto:${email}">${email}</a></td>
-                        <td>${message}${fileHtml}</td>
+                        <td>
+                            <strong>${fullName}</strong>
+                            ${occupationHtml}
+                            ${nationalityHtml}
+                        </td>
+                        <td>
+                            <a href="mailto:${email}">${email}</a>
+                            ${phone}
+                        </td>
+                        <td>${addressHtml}</td>
+                        <td>
+                            ${message}
+                            ${fileHtml}
+                        </td>
                         <td>${sub.submitted_at}</td>
                     `;
                     tbody.appendChild(row);
@@ -77,7 +93,7 @@
             } catch (error) {
                 console.error("Failed to load submissions:", error);
                 document.querySelector("#submissions-table tbody").innerHTML = 
-                    '<tr><td colspan="5" style="color: red;">Failed to load data from backend API.</td></tr>';
+                    '<tr><td colspan="6" style="color: red;">Failed to load data from backend API.</td></tr>';
             }
         }
 
