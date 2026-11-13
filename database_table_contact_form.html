@@ -1,1 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Submissions Dashboard</title>
+    <style>
+        table { width: 100%; border-collapse: collapse; font-family: sans-serif; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
 
+    <h2>Form Submissions</h2>
+    <table id="submissions-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th>Submitted At</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Data will be inserted here dynamically -->
+        </tbody>
+    </table>
+
+    <script>
+        const API_URL = "https://your-backend-service.onrender.com/api/submissions";
+
+        async function loadSubmissions() {
+            try {
+                const response = await fetch(API_URL);
+                const submissions = await response.json();
+                
+                const tbody = document.querySelector("#submissions-table tbody");
+                tbody.innerHTML = ""; // Clear loading state if any
+
+                submissions.forEach(sub => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${sub.id}</td>
+                        <td>${sub.name}</td>
+                        <td>${sub.email}</td>
+                        <td>${sub.message}</td>
+                        <td>${sub.submitted_at}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Failed to load submissions:", error);
+            }
+        }
+
+        loadSubmissions();
+    </script>
+
+</body>
+</html>
