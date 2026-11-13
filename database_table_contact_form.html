@@ -4,27 +4,28 @@
     <meta charset="UTF-8">
     <title>Submissions Dashboard</title>
     <style>
-        table { width: 100%; border-collapse: collapse; font-family: sans-serif; }
-        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        body { font-family: sans-serif; max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; vertical-align: top; font-size: 14px; }
         th { background-color: #f4f4f4; }
-
+        .file-tag { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-size: 12px; margin-top: 4px; }
     </style>
 </head>
 <body>
 
-    <h2>Form Submissions</h2>
+    <h2>Form Submissions Dashboard</h2>
     <table id="submissions-table">
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Name</th>
+                <th>Name / Details</th>
                 <th>Email</th>
-                <th>Message</th>
+                <th>Message / Content</th>
                 <th>Submitted At</th>
             </tr>
         </thead>
         <tbody>
-            <!-- Data will be inserted here dynamically -->
+            <tr><td colspan="5">Loading submissions...</td></tr>
         </tbody>
     </table>
 
@@ -34,24 +35,49 @@
         async function loadSubmissions() {
             try {
                 const response = await fetch(API_URL);
-                const submissions = await response.json();
+                const result = await response.json();
+                
+                // Extract the data array from the API response object
+                const submissions = result.data || [];
                 
                 const tbody = document.querySelector("#submissions-table tbody");
-                tbody.innerHTML = ""; // Clear loading state if any
+                tbody.innerHTML = ""; 
+
+                if (submissions.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="5">No submissions found.</td></tr>';
+                    return;
+                }
 
                 submissions.forEach(sub => {
+                    const p = sub.payload || {};
+                    
+                    // Handle both contact form ("name") and application form ("first_name"/"last_name")
+                    let fullName = p.name || `${p.first_name || ''} ${p.last_name || ''}`.trim() || 'Unknown';
+                    if (p.occupation) fullName += ` (${p.occupation})`;
+
+                    const email = p.email || 'N/A';
+                    const message = p.message || 'No message provided';
+                    
+                    // Check if a file was uploaded
+                    let fileHtml = '';
+                    if (sub.saved_files) {
+                        fileHtml = `<div class="file-tag">📎 ${sub.saved_files}</div>`;
+                    }
+
                     const row = document.createElement("tr");
                     row.innerHTML = `
                         <td>${sub.id}</td>
-                        <td>${sub.name}</td>
-                        <td>${sub.email}</td>
-                        <td>${sub.message}</td>
+                        <td><strong>${fullName}</strong></td>
+                        <td><a href="mailto:${email}">${email}</a></td>
+                        <td>${message}${fileHtml}</td>
                         <td>${sub.submitted_at}</td>
                     `;
                     tbody.appendChild(row);
                 });
             } catch (error) {
                 console.error("Failed to load submissions:", error);
+                document.querySelector("#submissions-table tbody").innerHTML = 
+                    '<tr><td colspan="5" style="color: red;">Failed to load data from backend API.</td></tr>';
             }
         }
 
