@@ -30,7 +30,8 @@ A lightweight, backend application built to dynamically process, validate, and s
 ├── models.py        # SQLAlchemy database models (e.g., FormSubmission)
 └── crud.py          # Database query functions (Create, Read, Update, Delete)
 
-**main.py** (The Application Entrypoint)
+**main.py**
+(The Application Entrypoint)
 What it does: Initializes the FastAPI application instance (app = FastAPI()), registers middleware, and hosts your API route handlers (endpoints like @app.get or @app.post).
 
 Key responsibility: Acting as the traffic controller. It receives HTTP requests, calls the necessary functions from crud.py, validates data using schemas.py, and returns the final HTTP response to the client.
