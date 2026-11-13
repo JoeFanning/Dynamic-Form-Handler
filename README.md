@@ -27,13 +27,19 @@ A lightweight, backend application built to dynamically process, validate, and s
 │
 ├── main.py          # FastAPI app initialization and route registration
 ├── database.py      # SQLAlchemy engine, SessionLocal, and Base
-(The Connection Hub)
-  What it does: Initializes the database connection, configures the SQLAlchemy engine, and creates the session factory (SessionLocal).
-  
-  Key responsibility: It also defines Base (which your database models inherit from) and provides the get_db() dependency generator function. This generator uses    Python's yield statement to automatically handle opening a database session for a request and closing it when the request finishes—eliminating the need for manual try...finally blocks in your routes
 ├── models.py        # SQLAlchemy database models (e.g., FormSubmission)
 ├── schemas.py       # Pydantic models for request/response validation
 └── crud.py          # Database query functions (Create, Read, Update, Delete)
+
+**database.py** (The Connection Hub)
+What it does: Initializes the database connection, configures the SQLAlchemy engine, and creates the session factory (SessionLocal).
+
+Key responsibility: It also defines Base (which your database models inherit from) and provides the get_db() dependency generator function. This generator uses Python's yield statement to automatically handle opening a database session for a request and closing it when the request finishes—eliminating the need for manual try...finally blocks in your routes
+
+models.py (The Database Blueprint / ORM)
+What it does: Defines your SQLAlchemy ORM (Object-Relational Mapping) models. These Python classes map directly to your database tables and columns (e.g., FormSubmission corresponding to a form_submissions table).
+
+Key responsibility: Telling SQLAlchemy what your database schema looks like so it can translate Python code into SQL queries behind the scenes.
 
 
 (to see in browser current operational status or live status of Render backend engine: https://dynamic-form-handler.onrender.com/)
