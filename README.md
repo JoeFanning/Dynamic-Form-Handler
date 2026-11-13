@@ -24,10 +24,16 @@ A lightweight, backend application built to dynamically process, validate, and s
 ## 📦 Project Structure
 
 ```text
-├── main.py               # Application entry point & FastAPI setup
-├── requirements.txt      # Python dependencies
-├── index.html            # A sample form to use on your website or connect to it here using url
-└── README.md             # Project documentation
+│
+├── main.py          # FastAPI app initialization and route registration
+├── database.py      # SQLAlchemy engine, SessionLocal, and Base
+(The Connection Hub)
+  What it does: Initializes the database connection, configures the SQLAlchemy engine, and creates the session factory (SessionLocal).
+  
+  Key responsibility: It also defines Base (which your database models inherit from) and provides the get_db() dependency generator function. This generator uses    Python's yield statement to automatically handle opening a database session for a request and closing it when the request finishes—eliminating the need for manual try...finally blocks in your routes
+├── models.py        # SQLAlchemy database models (e.g., FormSubmission)
+├── schemas.py       # Pydantic models for request/response validation
+└── crud.py          # Database query functions (Create, Read, Update, Delete)
 
 
 (to see in browser current operational status or live status of Render backend engine: https://dynamic-form-handler.onrender.com/)
