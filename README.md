@@ -23,7 +23,6 @@ A lightweight, backend application built to dynamically process, validate, and s
 
 ## 📦 Project Structure
 
-```text
 │
 ├── main.py          # FastAPI app initialization and route registration
 ├── database.py      # SQLAlchemy engine, SessionLocal, and Base
