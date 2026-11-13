@@ -16,8 +16,8 @@ A lightweight, backend application built to dynamically process, validate, and s
 ## 🛠️ Tech Stack
 
 * **Framework:** [FastAPI](https://fastapi.tiangolo.com/) (Python)
-* **Database:** PostgreSQL
-* **Server/Deployment:** Uvicorn, Render
+* **Database:** [PostgreSQL](https://www.postgresql.org/)
+* **Server/Deployment:** [Uvicorn](https://pypi.org/project/uvicorn/), [Render](https://render.com/)
 
 ---
 
@@ -53,11 +53,12 @@ What it does: Stands for Create, Read, Update, Delete. This file contains pure d
 
 Key responsibility: Keeping database queries completely separate from your HTTP routing logic. If you need to fetch submissions from a background worker, a CLI script, or a different API endpoint, you can just call crud.get_all_submissions(db) instead of rewriting the query
 
-
+## 🔗Links
 (to see in browser current operational status or live status of Render backend engine: [https://dynamic-form-handler.onrender.com/](https://dynamic-form-handler.onrender.com/))
 
-(to see in browser contents of the database on Render: https://dynamic-form-handler.onrender.com/api/submissions)
+To see the Json contents of the Render database for all submitted forms: in your browser: https://dynamic-form-handler.onrender.com/api/submissions
+
+To see a HTML version of the Render database for all submitted forms: https://joefanning.github.io/Dynamic-Form-Handler/all_forms_database_table.html
 
 I also downloaded Dbeaver 26.2.4(https://dbeaver.io/download/) a free, open-source database management tool onto my computer to look at the database structure and information in detail on the same database on Render.
 
-https://joefanning.github.io/Dynamic-Form-Handler/all_forms_database_table.html
