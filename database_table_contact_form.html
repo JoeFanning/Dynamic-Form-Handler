@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <title>Submissions Dashboard</title>
     <style>
-        body { font-family: sans-serif; max-width: 1600px; margin: 30px auto; padding: 0 20px; }
+        body { font-family: sans-serif; max-width: 1700px; margin: 30px auto; padding: 0 20px; }
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 10px; text-align: left; vertical-align: top; font-size: 13px; }
         th { background-color: #f4f4f4; }
         .file-tag { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-top: 4px; }
-        .meta-text { color: #555; font-size: 12px; margin-top: 2px; }
     </style>
 </head>
 <body>
@@ -22,14 +21,16 @@
                 <th>Name</th>
                 <th>Occupation</th>
                 <th>Nationality</th>
-                <th>Contact Info</th>
+                <th>Email</th>
+                <th>Phone</th>
                 <th>Address & Location</th>
-                <th>Message / Content</th>
+                <th>Message</th>
+                <th>Saved Files</th>
                 <th>Submitted At</th>
             </tr>
         </thead>
         <tbody>
-            <tr><td colspan="8">Loading submissions...</td></tr>
+            <tr><td colspan="10">Loading submissions...</td></tr>
         </tbody>
     </table>
 
@@ -47,31 +48,26 @@
                 tbody.innerHTML = ""; 
 
                 if (submissions.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="8">No submissions found.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="10">No submissions found.</td></tr>';
                     return;
                 }
 
                 submissions.forEach(sub => {
                     const p = sub.payload || {};
                     
-                    // Name
+                    // Fields mapping
                     let fullName = p.name || `${p.first_name || ''} ${p.last_name || ''}`.trim() || 'Unknown';
-                    
-                    // Specific fields
-                    let occupation = p.occupation || 'N/A';
-                    let nationality = p.nationality || 'N/A';
-
-                    // Contact Info
-                    const email = p.email || 'N/A';
-                    const phone = p.phone ? `<div class="meta-text">📞 ${p.phone}</div>` : '';
+                    let occupation = p.occupation || '-';
+                    let nationality = p.nationality || '-';
+                    let email = p.email ? `<a href="mailto:${p.email}">${p.email}</a>` : '-';
+                    let phone = p.phone || '-';
 
                     // Address Info
                     let addressParts = [p.street_address, p.city, p.postal_code, p.country].filter(Boolean);
-                    let addressHtml = addressParts.length > 0 ? addressParts.join(', ') : 'N/A';
+                    let addressHtml = addressParts.length > 0 ? addressParts.join(', ') : '-';
 
-                    // Message & Files
-                    const message = p.message || 'No message provided';
-                    let fileHtml = sub.saved_files ? `<div class="file-tag">📎 ${sub.saved_files}</div>` : '';
+                    let message = p.message || '-';
+                    let fileHtml = sub.saved_files ? `<div class="file-tag">📎 ${sub.saved_files}</div>` : '-';
 
                     const row = document.createElement("tr");
                     row.innerHTML = `
@@ -79,15 +75,11 @@
                         <td><strong>${fullName}</strong></td>
                         <td>${occupation}</td>
                         <td>${nationality}</td>
-                        <td>
-                            <a href="mailto:${email}">${email}</a>
-                            ${phone}
-                        </td>
+                        <td>${email}</td>
+                        <td>${phone}</td>
                         <td>${addressHtml}</td>
-                        <td>
-                            ${message}
-                            ${fileHtml}
-                        </td>
+                        <td>${message}</td>
+                        <td>${fileHtml}</td>
                         <td>${sub.submitted_at}</td>
                     `;
                     tbody.appendChild(row);
@@ -95,7 +87,7 @@
             } catch (error) {
                 console.error("Failed to load submissions:", error);
                 document.querySelector("#submissions-table tbody").innerHTML = 
-                    '<tr><td colspan="8" style="color: red;">Failed to load data from backend API.</td></tr>';
+                    '<tr><td colspan="10" style="color: red;">Failed to load data from backend API.</td></tr>';
             }
         }
 
