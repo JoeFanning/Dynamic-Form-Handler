@@ -57,17 +57,17 @@
                     
                     // Fields mapping
                     let fullName = p.name || `${p.first_name || ''} ${p.last_name || ''}`.trim() || 'Unknown';
-                    let occupation = p.occupation || '-';
-                    let nationality = p.nationality || '-';
+                    let occupation = p.occupation || 'N/A';
+                    let nationality = p.nationality || 'N/A';
                     let email = p.email ? `<a href="mailto:${p.email}">${p.email}</a>` : '-';
-                    let phone = p.phone || '-';
+                    let phone = p.phone || 'N/A';
 
                     // Address Info
                     let addressParts = [p.street_address, p.city, p.postal_code, p.country].filter(Boolean);
-                    let addressHtml = addressParts.length > 0 ? addressParts.join(', ') : '-';
+                    let addressHtml = addressParts.length > 0 ? addressParts.join(', ') : 'N/A';
 
-                    let message = p.message || '-';
-                    let fileHtml = sub.saved_files ? `<div class="file-tag">📎 ${sub.saved_files}</div>` : '-';
+                    let message = p.message || 'N/A';
+                    let fileHtml = sub.saved_files ? `<div class="file-tag">📎 ${sub.saved_files}</div>` : 'N/A';
 
                     const row = document.createElement("tr");
                     row.innerHTML = `
